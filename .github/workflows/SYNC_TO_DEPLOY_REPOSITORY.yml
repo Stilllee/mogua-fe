@@ -1,11 +1,14 @@
 name: Synchronize to forked repo
 on:
-  push:
-    branches:
-      - Develop
+  workflow_run:
+    workflows: 
+      - "Push Validation"
+    types:
+      - completed
 
 jobs:
   sync:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Sync forked repo
     runs-on: ubuntu-latest
 
@@ -16,16 +19,20 @@ jobs:
           token: ${{ secrets.GITHUBACTIONKEY }}
           fetch-depth: 0
           ref: Develop
-
+          
       - name: Add remote-url
         run: |
-          git remote add forked-repo https://joshuayeyo:${{ secrets.GITHUBACTIONKEY }}@github.com/joshuayeyo/mogua
+          git remote add forked-repo https://joshuayeyo:${{ secrets.GITHUBACTIONKEY }}@github.com/joshuayeyo/mogua_FE
           git config user.name joshuayeyo
           git config user.email chiikawayeyo@gmail.com
+
+      - name: Checkout Deploy
+        run: |
+          git checkout -b Deploy
       
       - name: Push changes to forked-repo 
         run: |
-          git push -f forked-repo Deploy
+          git push -f forked-repo Deploy:Deploy
       
       - name: Clean up
         run: |

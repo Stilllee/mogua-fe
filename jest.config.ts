@@ -1,5 +1,23 @@
-/// <reference types="next" />
-/// <reference types="next/image-types/global" />
+import nextJest from "next/jest";
 
-// NOTE: This file should not be edited
-// see https://nextjs.org/docs/app/building-your-application/configuring/typescript for more information.
+const createJestConfig = nextJest({
+  dir: "./",
+});
+const config = async () => {
+  const nextConfig = await createJestConfig({})();
+  return {
+    ...nextConfig,
+    testEnvironment: "jsdom",
+    //   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+    rootDir: "./",
+    moduleNameMapper: {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^.+\\.svg$": "<rootDir>/src/utils/__svgTransformer__.ts",
+    },
+    // transform: {
+    //   "^.+\\.svg$": "jest-transformer-svg",
+    // },
+  };
+};
+
+export default config;
