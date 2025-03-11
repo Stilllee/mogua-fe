@@ -22,6 +22,8 @@ jobs:
           gh --version
           echo "Github CLI 인증 테스트 ..."
           gh repo view ${{ github.repository }} --json name -q .name
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
       
       - name: Create PR from Develop to main
         run: |
@@ -38,4 +40,4 @@ jobs:
             echo "PR이 이미 존재합니다: #$EXISTING_PR"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
+          GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
