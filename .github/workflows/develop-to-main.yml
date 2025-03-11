@@ -8,11 +8,19 @@ on:
 jobs: 
   create-pr:
     runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup GitHub CLI
+        run: |
+          gh auth setup-git
+          gh auth status
       
       - name: Create PR from Develop to main
         run: |
@@ -30,4 +38,4 @@ jobs:
             echo "PR이 이미 존재합니다: #$EXISTING_PR"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
