@@ -39,9 +39,9 @@ jobs:
         
       # 6. 테스트와 빌드가 성공하면 자동으로 머지
       # --merge 옵션으로 모른 커밋 히스토리 유지
-      - name: Auto-merge PR
+      - name: Merge PR if build succeeds
         if: success()
         run: |
-          git pr merge ${{ github.event.pull_request.number }} --merge
+          gh pr merge ${{ github.event.pull_request.number }} --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
