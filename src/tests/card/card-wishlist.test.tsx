@@ -60,7 +60,7 @@ describe("카드 컴포넌트 북마크 조건부 렌더링 테스트", () => {
         email: "ithpark@codeit.com",
         userId: 68,
         profileImg:
-          "https://fesi6.s3.dualstack.ap-southeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
+          "https://mogua.s3.ap-northeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
       },
       setUser: jest.fn(),
       clearUser: jest.fn(),
@@ -87,7 +87,7 @@ describe("카드 컴포넌트 북마크 조건부 렌더링 테스트", () => {
         email: "ithpark@codeit.com",
         userId: 68,
         profileImg:
-          "https://fesi6.s3.dualstack.ap-southeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
+          "https://mogua.s3.ap-northeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
       },
       setUser: jest.fn(),
       clearUser: jest.fn(),
@@ -202,7 +202,7 @@ describe("찜하기 클릭 이벤트 테스트", () => {
         email: "ithpark@codeit.com",
         userId: 68,
         profileImg:
-          "https://fesi6.s3.dualstack.ap-southeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
+          "https://mogua.s3.ap-northeast-2.amazonaws.com/profileImage/defaultProfileImages/2.png",
       },
       setUser: jest.fn(),
       clearUser: jest.fn(),
