@@ -12,7 +12,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "fesi6.s3.dualstack.ap-southeast-2.amazonaws.com",
+        hostname: "mogua.s3.ap-northeast-2.amazonaws.com",
         pathname: "/**",
       },
       {
