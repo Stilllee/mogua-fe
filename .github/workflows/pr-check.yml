@@ -1,0 +1,47 @@
+# PR이 생성될 때마다 테스트와 빌드를 실행하고, 성공 시 자동으로 머지
+name: PR Check
+
+# 워크플로우가 실행될 조건 설정
+# Develop 브랜치나 main 브랜치고 PR이 생성될 때 실행
+on:
+  pull_request:
+    branches:
+      - 'Develop'
+      - 'main'
+      
+# 실행할 작업 정의
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. Node.js 설정 (캐시 사용으로 의존성 설치 속도 향상)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # 3. 의존성 설치 (npm ci는 package-lock.json을 엄격하게 따름)
+      - name: Install dependencies
+        run: npm ci
+      
+      # 4. 테스트 실행
+      - name: Run tests
+        run: npm run test
+      
+      # 5. 프로젝트 빌드
+      - name: Build
+        run: npm run build
+        
+      # 6. 테스트와 빌드가 성공하면 자동으로 머지
+      # --merge 옵션으로 모른 커밋 히스토리 유지
+      - name: Merge PR if build succeeds
+        if: success()
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

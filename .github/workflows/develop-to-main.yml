@@ -1,0 +1,41 @@
+name: Develop to main
+
+on:
+  push:
+    branches:
+      - 'Develop'
+
+jobs: 
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Debug GitHub CLI
+        run: |
+          gh --version
+          echo "Github CLI 인증 테스트 ..."
+          gh repo view ${{ github.repository }} --json name -q .name
+      
+      - name: Create PR from Develop to main
+        run: |
+          echo "Develop에서 Main으로 PR 생성..."
+          
+          # 이미 존재하는 PR 확인
+          EXISTING_PR=$(gh pr list --base main --head Develop --json number -q '.[0].number')
+          
+          if [ -z "$EXISTING_PR" ]; then
+            # PR 생성
+            PR_URL=$(gh pr create --base main --head Develop --title "Develop -> main: 자동 머지" --body "Develop 브랜치의 변경사항을 main 브랜치로 자동 머지합니다.")
+            echo "PR 생성됨: $PR_URL"
+          else
+            echo "PR이 이미 존재합니다: #$EXISTING_PR"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
