@@ -116,6 +116,7 @@
 <br>
 
 ## 데모 영상
+아래의 이미지를 클릭하면 데모 영상을 확인할 수 있습니다.
 [![](https://github.com/user-attachments/assets/a09f7823-0416-4bdd-a2c7-60f445d4d459)](https://youtube.com/shorts/x_3VGVIGzhw?feature=share)
 
 <br>
