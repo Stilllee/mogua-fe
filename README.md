@@ -30,15 +30,6 @@
 <br>
 
 ## Stacks
-
-### Environment
-
-[![Environment](https://skillicons.dev/icons?i=vscode,git,github)](https://skillicons.dev)
-
-### Config
-
-[![Config](https://skillicons.dev/icons?i=npm)](https://skillicons.dev)
-
 ### Development
 
 <p>
@@ -46,17 +37,13 @@
   <img witdh="48" height="48" src="https://i.ibb.co/fY9ht9zM/react-query.png" />
 </p>
 
-### Communication
-
-[![Communication](https://skillicons.dev/icons?i=discord,notion)](https://skillicons.dev)
-
 <br>
 
 ## 주요 기능 및 기술적 구현
 
-### 백엔드 협업 및 네트워크 인프라
+### 1. 백엔드 협업 및 네트워크 인프라
 
-#### API 명세서 설계
+#### 1.1 API 명세서 설계
 
 명확한 API 명세서를 직접 설계하고 백엔드 개발자와 지속적인 피드백을 주고 받으며 효율적인 협업 환경 구축
 
@@ -65,7 +52,7 @@
 | ------------------------------ | --------------------------- | ----------------------- |
 | ![]() | ![]() | ![]() |
 
-#### 커스텀 fetch 모듈: [fetcher.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/lib/user/fetcher.ts)
+#### 1.2 커스텀 fetch 모듈: [fetcher.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/lib/user/fetcher.ts)
 
 Next.js와 fetch의 캐싱 옵션을 최대한 활용하기 위해 axios 대신 fetch API를 기반으로 한 재사용 가능한 모듈 개발
 
@@ -101,7 +88,7 @@ export const patch = (url, data, options) =>
 export const del = (url, options) => fetcher(url, "DELETE", undefined, options);
 ```
 
-#### 전역 에러 처리: [error.tsx](https://github.com/mogua-station/FE/blob/Production/src/app/error.tsx)
+#### 1.3 전역 에러 처리: [error.tsx](https://github.com/mogua-station/FE/blob/Production/src/app/error.tsx)
 
 Next.js의 error.tsx를 활용한 일관된 에러 UI 제공
 
@@ -130,9 +117,18 @@ export default function Error({ error }: ErrorProps) {
 }
 ```
 
-**예시**
+<details>
+<summary>활용 예시</summary>
+  
+<div markdown="1">
 
-```ts
+```typescript
+// /user/[id]/page.tsx
+
+const userInfo = await getUserProfile(userId, { cache: "no-store" });
+```
+
+```typescript
 // getUserProfile.ts
 
 export async function getUserProfile(userId: string, options?: RequestInit) {
@@ -155,9 +151,17 @@ export async function getUserProfile(userId: string, options?: RequestInit) {
 }
 ```
 
-### 데이터 관리 전략
+</div>
 
-### 코드 품질 및 리팩토링
+<img src="https://private-user-images.githubusercontent.com/108785772/410378674-e0e70aab-41c2-4018-a886-2e587cb6790c.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDE3NzAwOTYsIm5iZiI6MTc0MTc2OTc5NiwicGF0aCI6Ii8xMDg3ODU3NzIvNDEwMzc4Njc0LWUwZTcwYWFiLTQxYzItNDAxOC1hODg2LTJlNTg3Y2I2NzkwYy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzEyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMxMlQwODU2MzZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03OTA0ZjQ5NmRkMWM1YzA2MDZkODJjZjNiNTBkMzIxZGVjN2EzM2U3Y2EwZDM3ODljYTIyZjRlZGVjMzVjZDIxJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.l0SITeGIV18b9sI3M4MMHl5ql_THBunxGuuxyn5n-e4" />
+<img src="https://private-user-images.githubusercontent.com/108785772/410382093-418bfb42-85f1-42e1-a0b8-9ab533b0c333.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDE3NzAwOTYsIm5iZiI6MTc0MTc2OTc5NiwicGF0aCI6Ii8xMDg3ODU3NzIvNDEwMzgyMDkzLTQxOGJmYjQyLTg1ZjEtNDJlMS1hMGI4LTlhYjUzM2IwYzMzMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzEyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMxMlQwODU2MzZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0wZGU2YWUxNTE1OWU5YWZkYTg1ZDJjMWE3NTc2ZjVkZTg4NGJiMGEwZGRhZjAyNDJjZjEyNWVmOGU1OGU0OTUxJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.4p2SUylkvr-_a4Lwj840ijpxD_bHIfeq3Apvp1eFzZI" />
+</details>
+
+<br>
+
+### 2. 데이터 관리 전략
+
+### 3. 코드 품질 및 리팩토링
 
 <br>
 
