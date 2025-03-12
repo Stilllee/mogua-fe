@@ -38,9 +38,70 @@
 
 <br>
 
+## 담당 페이지 소개
+
+<details>
+<summary>페이지 상세 설명 보기</summary>
+
+<div markdown="1">
+
+### 유저 페이지
+
+- 프로필 정보와 4가지 활동 탭(`내 모임`/`내 리뷰`/`만든 모임`/`수강평`)으로 구성되어 있습니다.
+  - 내 모임: 참여 중인 스터디/과외 목록
+  - 내 리뷰: 스터디/과외별로 구분되며, 각각 '작성 가능한 리뷰'와 '작성한 리뷰' 목록 제공
+  - 만든 모임: 생성한 스터디/과외 목록
+  - 수강평: 과외선생님이 생성한 과외에 대한 리뷰 목록
+- 데이터는 10개씩 무한 스크롤로 자동 로딩되며, 로딩 중에는 스켈레톤 UI를 보여줍니다.
+- 페이지 진입 시 새로운 데이터를 요청하고, 이후 10분간은 탭 전환 시에도 캐시된 데이터를 바로 확인할 수 있습니다.
+- 본인 페이지에서만 프로필 수정과 리뷰 관리가 가능합니다.
+- `과외선생님`은 수강평 탭이 추가로 제공됩니다.
+
+| 마이페이지 (일반유저)                                                                | 다른 유저페이지 (과외선생님)                                                         |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| ![](https://github.com/user-attachments/assets/c9ce5dba-ad7e-4e0f-977f-6153235226c7) | ![](https://github.com/user-attachments/assets/6dcd5fa3-eefa-4562-9c52-b75a8738b221) |
+
+### 유저 프로필 수정 페이지
+
+- 기존 정보(`닉네임`, `이메일`, `자기소개`, `태그`)가 기본값으로 표시되며, 이메일을 제외한 모든 정보를 수정할 수 있습니다.
+- 프로필 이미지는 선택 즉시 미리보기로 확인되며, IndexedDB를 활용해 새로고침해도 유지됩니다.
+- 변경사항이 없거나 유효하지 않은 값이 있으면 수정이 제한됩니다.
+- 페이지 이탈 시 확인 모달이 표시되어 실수를 방지합니다.
+
+![](https://github.com/user-attachments/assets/fc4fd5d0-7813-4150-bbbc-4ae071b2016c)
+
+### 리뷰 작성/수정
+
+- 3단계 평점 시스템(그냥 그래요/괜찮아요/추천해요)으로 평가합니다.
+- 평점과 리뷰 내용은 필수로 입력해야 하며, 사진은 1장까지 선택적으로 첨부할 수 있습니다.
+- 수정 시에는 기존 리뷰 정보가 기본값으로 표시되며, 변경사항이 있어야만 수정이 가능합니다.
+- 작성/수정 완료 시 유저 페이지의 리뷰 목록이 자동으로 업데이트됩니다.
+
+| 리뷰 작성                                                                            | 리뷰 수정                                                                            |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| ![](https://github.com/user-attachments/assets/59d67797-8f15-4f61-82f6-4fcc896eda06) | ![](https://github.com/user-attachments/assets/a05c1390-6cc0-46c6-ab34-abd07111e5ee) |
+
+### 리뷰 삭제
+
+- 유저 페이지에서 더보기 메뉴를 통해 즉시 삭제할 수 있습니다.
+- 삭제 전 확인 모달을 통해 실수를 방지합니다.
+- 삭제 즉시 리뷰 목록에서 제거되며, 관련 데이터가 자동으로 업데이트됩니다.
+
+![](https://github.com/user-attachments/assets/dd67c768-1c2b-4306-8be0-cc779fcd2d38)
+
+</div>
+
+</details>
+
+<br>
+
+## 데모 영상
+
+<br>
+
 ## 주요 작업
 
-### 1. 백엔드 협업 및 네트워크 인프라
+### 1. API 통신
 
 #### 1.1 API 명세서 설계
 
@@ -51,7 +112,9 @@
 | ------------------------------ | --------------------------- | ----------------------- |
 | ![](https://i.ibb.co/jP2RqpnD/2025-03-12-5-50-38.png) | ![](https://i.ibb.co/8Lxx9Rr4/2025-03-12-6-01-51.png) | ![](https://i.ibb.co/p6S2DL3b/2025-03-12-6-02-12.png) |
 
-#### 1.2 커스텀 fetch 모듈: [fetcher.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/lib/user/fetcher.ts)
+#### 1.2 커스텀 fetch 모듈 개발
+
+[fetcher.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/lib/user/fetcher.ts)
 
 Next.js와 fetch의 캐싱 옵션을 최대한 활용하기 위해 axios 대신 fetch API를 기반으로 한 재사용 가능한 모듈 개발
 
@@ -87,7 +150,72 @@ export const patch = (url, data, options) =>
 export const del = (url, options) => fetcher(url, "DELETE", undefined, options);
 ```
 
-#### 1.3 전역 에러 처리: [error.tsx](https://github.com/mogua-station/FE/blob/Production/src/app/error.tsx)
+<br>
+
+### 2. 데이터 관리 전략
+
+#### 2.1 복잡한 구조의 탭 데이터 관리
+
+[useInfiniteMeetings.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/hooks/useInfiniteMeetings.ts)
+
+```ts
+const { data: 탭별데이터 } = useInfiniteQuery({
+  queryKey: ["탭이름", ...필터상태],
+  queryFn: ({ pageParam = 1 }) =>
+    fetchTabData({ type: 모임타입, page: pageParam, ...필터상태 }),
+  getNextPageParam: (lastPage) =>
+    lastPage.isLast ? undefined : lastPage.nextPage,
+  staleTime: 1000 * 60 * 10,
+});
+```
+
+- `queryKey`에 탭과 필터 상태를 포함시켜 각 조건별 데이터를 독립적으로 캐싱
+- 동일한 탭과 필터 조합 재방문 시에는 `staleTime`동안 캐시된 데이터를 사용하여 불필요한 API 호출을 방지
+
+#### 2.2 데이터 동기화
+
+```ts
+const { mutate: deleteReview } = useMutation({
+  mutationFn: (reviewId: number) => deleteReviewRequest(reviewId),
+  onSuccess: () => {
+    // 리뷰 삭제 시 연관된 데이터 자동 갱신
+    queryClient.invalidateQueries({
+      queryKey: ["reviews"],
+    });
+  },
+});
+```
+
+- `useMutation`의 `onSuccess` 콜백에서 `invalidateQueries`로 관련 쿼리들을 무효화하여 최신 데이터로 자동 갱신
+
+#### 2.3 무한 스크롤 구현
+
+```ts
+// Intersection Observer로 스크롤 감지
+const { ref } = useInView({
+  onChange: (inView) => {
+    // 요소가 화면에 보이고, 다음 페이지가 있으며, 현재 요청 중이 아닐 때
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage(); // 다음 페이지 데이터 요청
+    }
+  },
+});
+
+// 마지막 요소에 ref 연결
+<li ref={isLastItem ? ref : undefined}>
+  <Card />
+</li>
+```
+
+- `react-intersection-observer`의 `useInView`로 스크롤을 감지하고, 마지막 아이템이 뷰포트에 진입 시 다음 페이지 데이터를 요청
+
+<br>
+
+### 3. 사용자 경험
+
+#### 3.2 전역 에러 처리
+
+[error.tsx](https://github.com/mogua-station/FE/blob/Production/src/app/error.tsx)
 
 Next.js의 error.tsx를 활용한 일관된 에러 UI 제공
 
@@ -156,139 +284,9 @@ export async function getUserProfile(userId: string, options?: RequestInit) {
 <img src="https://private-user-images.githubusercontent.com/108785772/410382093-418bfb42-85f1-42e1-a0b8-9ab533b0c333.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDE3NzAwOTYsIm5iZiI6MTc0MTc2OTc5NiwicGF0aCI6Ii8xMDg3ODU3NzIvNDEwMzgyMDkzLTQxOGJmYjQyLTg1ZjEtNDJlMS1hMGI4LTlhYjUzM2IwYzMzMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzEyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMxMlQwODU2MzZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0wZGU2YWUxNTE1OWU5YWZkYTg1ZDJjMWE3NTc2ZjVkZTg4NGJiMGEwZGRhZjAyNDJjZjEyNWVmOGU1OGU0OTUxJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.4p2SUylkvr-_a4Lwj840ijpxD_bHIfeq3Apvp1eFzZI" />
 </details>
 
-<br>
+#### 3.2 반응형 스켈레톤 UI
 
-### 2. 데이터 관리 전략
-
-#### 2.1 복잡한 구조의 탭 데이터 관리: [useInfiniteMeetings.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/hooks/useInfiniteMeetings.ts)
-
-```ts
-const { data: 탭별데이터 } = useInfiniteQuery({
-  queryKey: ["탭이름", ...필터상태],
-  queryFn: ({ pageParam = 1 }) =>
-    fetchTabData({ type: 모임타입, page: pageParam, ...필터상태 }),
-  getNextPageParam: (lastPage) =>
-    lastPage.isLast ? undefined : lastPage.nextPage,
-  staleTime: 1000 * 60 * 10,
-});
-```
-
-- `queryKey`에 탭과 필터 상태를 포함시켜 각 조건별 데이터를 독립적으로 캐싱
-- 동일한 탭과 필터 조합 재방문 시에는 `staleTime`동안 캐시된 데이터를 사용하여 불필요한 API 호출을 방지
-
-#### 2.2 데이터 동기화
-
-```ts
-const { mutate: deleteReview } = useMutation({
-  mutationFn: (reviewId: number) => deleteReviewRequest(reviewId),
-  onSuccess: () => {
-    // 리뷰 삭제 시 연관된 데이터 자동 갱신
-    queryClient.invalidateQueries({
-      queryKey: ["reviews"],
-    });
-  },
-});
-```
-
-- `useMutation`의 `onSuccess` 콜백에서 `invalidateQueries`로 관련 쿼리들을 무효화하여 최신 데이터로 자동 갱신
-
-#### 2.3 무한 스크롤 구현
-
-```ts
-// Intersection Observer로 스크롤 감지
-const { ref } = useInView({
-  onChange: (inView) => {
-    // 요소가 화면에 보이고, 다음 페이지가 있으며, 현재 요청 중이 아닐 때
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage(); // 다음 페이지 데이터 요청
-    }
-  },
-});
-
-// 마지막 요소에 ref 연결
-<li ref={isLastItem ? ref : undefined}>
-  <Card />
-</li>
-```
-
-- `react-intersection-observer`의 `useInView`로 스크롤을 감지하고, 마지막 아이템이 뷰포트에 진입 시 다음 페이지 데이터를 요청
-
-### 3. 코드 품질 및 리팩토링
-
-<br>
-
-## 담당 작업 상세
-
-### 유저 페이지
-
-#### 복잡한 데이터 구조
-
-프로필 정보와 4가지 활동 탭(`내 모임`/`내 리뷰`/`만든 모임`/`수강평`)으로 구성
-
-#### 효율적인 데이터 로딩
-
-React Query와 무한 스크롤을 통한 최적화된 데이터 fetching
-
-- 데이터는 10개씩 무한 스크롤로 자동 로딩되며, 로딩 중에는 반응형 스켈레톤 UI 제공
-- 데이터 캐싱(10분)을 통해 탭 전환 시 불필요한 API 호출 감소
-
-| 마이페이지 (일반유저)                                                                | 다른 유저페이지 (과외선생님)                                                         |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| ![](https://github.com/user-attachments/assets/c9ce5dba-ad7e-4e0f-977f-6153235226c7) | ![](https://github.com/user-attachments/assets/6dcd5fa3-eefa-4562-9c52-b75a8738b221) |
-
-### 유저 프로필 수정 페이지
-
-#### 폼 상태 관리
-
-기존 정보를 기본값으로 설정하고 변경사항을 실시간으로 감지
-
-#### 이미지 처리
-
-프로필 이미지 미리보기 및 IndexedDB를 활용한 상태 유지
-
-#### 유효성 검증
-
-변경사항이 없거나 유효하지 않은 값이 있을 때 수정 제한
-
-#### 사용자 경험 개선
-
-페이지 이탈 시 확인 모달로 실수 방지
-
-![](https://github.com/user-attachments/assets/fc4fd5d0-7813-4150-bbbc-4ae071b2016c)
-
-### 리뷰 작성/수정 및 삭제
-
-#### 3단계 평점 시스템
-
-직관적인 평가 UI (그냥 그래요/괜찮아요/추천해요)
-
-#### 실시간 UI 업데이트
-
-React Query의 낙관적 업데이트를 활용하며 작성/수정/삭제 시 즉각적인 UI 반영
-
-#### 폼 상태 관리
-
-필수 항목 검증 및 기존 데이터 자동 로딩
-
-#### 사용자 경험 개선
-
-작업 전 확인 모달을 통한 실수 방지
-
-| 리뷰 작성                                                                            | 리뷰 수정                                                                            |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| ![](https://github.com/user-attachments/assets/59d67797-8f15-4f61-82f6-4fcc896eda06) | ![](https://github.com/user-attachments/assets/a05c1390-6cc0-46c6-ab34-abd07111e5ee) |
-
-| 리뷰 삭제  
- ![](https://github.com/user-attachments/assets/dd67c768-1c2b-4306-8be0-cc779fcd2d38)
-
-<br>
-
-## 신경쓴 기능
-
-### 반응형 스켈레톤 UI를 활용한 로딩 상태 처리
-
-- 유저페이지에서는 사용자 기기의 화면 크기에 따라 적절한 개수의 스켈레톤 UI를 보여주도록 구현했습니다.
-- 모바일과 태블릿에서는 3개, 데스크탑에서는 6개의 스켈레톤을 표시하여 자연스러운 레이아웃을 유지하면서도 로딩 중임을 효과적으로 전달합니다.
+디바이스 화면 크기에 따라 최적화된 개수의 스켈레톤 UI 제공
 
 | 태블릿                                                                               | 데스크탑                                                                             |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
