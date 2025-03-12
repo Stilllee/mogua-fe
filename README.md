@@ -29,8 +29,7 @@
 
 <br>
 
-## Stacks
-### Development
+## 기술 스택
 
 <p>
   <img src="https://skillicons.dev/icons?i=react,nextjs,ts,tailwind" />
@@ -160,6 +159,59 @@ export async function getUserProfile(userId: string, options?: RequestInit) {
 <br>
 
 ### 2. 데이터 관리 전략
+
+#### 2.1 복잡한 구조의 탭 데이터 관리: [useInfiniteMeetings.ts](https://github.com/Stilllee/mogua-fe/blob/main/src/hooks/useInfiniteMeetings.ts)
+
+```ts
+const { data: 탭별데이터 } = useInfiniteQuery({
+  queryKey: ["탭이름", ...필터상태],
+  queryFn: ({ pageParam = 1 }) =>
+    fetchTabData({ type: 모임타입, page: pageParam, ...필터상태 }),
+  getNextPageParam: (lastPage) =>
+    lastPage.isLast ? undefined : lastPage.nextPage,
+  staleTime: 1000 * 60 * 10,
+});
+```
+
+- `queryKey`에 탭과 필터 상태를 포함시켜 각 조건별 데이터를 독립적으로 캐싱
+- 동일한 탭과 필터 조합 재방문 시에는 `staleTime`동안 캐시된 데이터를 사용하여 불필요한 API 호출을 방지
+
+#### 2.2 데이터 동기화
+
+```ts
+const { mutate: deleteReview } = useMutation({
+  mutationFn: (reviewId: number) => deleteReviewRequest(reviewId),
+  onSuccess: () => {
+    // 리뷰 삭제 시 연관된 데이터 자동 갱신
+    queryClient.invalidateQueries({
+      queryKey: ["reviews"],
+    });
+  },
+});
+```
+
+- `useMutation`의 `onSuccess` 콜백에서 `invalidateQueries`로 관련 쿼리들을 무효화하여 최신 데이터로 자동 갱신
+
+#### 2.3 무한 스크롤 구현
+
+```ts
+// Intersection Observer로 스크롤 감지
+const { ref } = useInView({
+  onChange: (inView) => {
+    // 요소가 화면에 보이고, 다음 페이지가 있으며, 현재 요청 중이 아닐 때
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage(); // 다음 페이지 데이터 요청
+    }
+  },
+});
+
+// 마지막 요소에 ref 연결
+<li ref={isLastItem ? ref : undefined}>
+  <Card />
+</li>
+```
+
+- `react-intersection-observer`의 `useInView`로 스크롤을 감지하고, 마지막 아이템이 뷰포트에 진입 시 다음 페이지 데이터를 요청
 
 ### 3. 코드 품질 및 리팩토링
 
