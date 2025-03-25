@@ -1,7 +1,7 @@
 import { get } from "@/lib/api/fetcher";
 import { getUserProfile } from "@/lib/user/getUserProfile";
 
-jest.mock("@/lib/user/fetcher");
+jest.mock("@/lib/api/fetcher");
 
 describe("getUserProfile", () => {
   const mockUserProfile = {
