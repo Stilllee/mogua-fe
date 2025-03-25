@@ -1,4 +1,4 @@
-import { get, post, patch, del } from "@/lib/user/fetcher";
+import { get, post, patch, del } from "@/lib/api/fetcher";
 
 describe("fetcher", () => {
   const mockData = { data: "test" };
@@ -32,14 +32,12 @@ describe("fetcher", () => {
         headers: customHeaders,
       });
 
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            ...customHeaders,
-          }),
-        }),
-      );
+      const mockFetch = global.fetch as jest.Mock;
+      const call = mockFetch.mock.calls[0];
+      const headers = call[1].headers;
+
+      expect(headers).toBeInstanceOf(Headers);
+      expect(headers.get("Accept-Language")).toBe("ko-KR");
     });
 
     it("JSON 데이터는 자동으로 직렬화된다", async () => {

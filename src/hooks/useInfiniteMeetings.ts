@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { userContentApi } from "@/lib/user/userContent";
+import { type ApiResponse, type PageResponse } from "@/types/api";
 import { type CardProps } from "@/types/card";
 import { type ReviewInfo } from "@/types/review";
 import {
@@ -10,8 +11,6 @@ import {
   type CreatedMeetup,
   type EligibleReview,
   type WrittenReview,
-  type ApiResponse,
-  type PageResponse,
 } from "@/types/user-page";
 import {
   mapParticipatingMeetupToCard,

@@ -1,4 +1,4 @@
-import { get } from "./fetcher";
+import { get } from "../api/fetcher";
 import { type UserProfile } from "@/types/user-page";
 
 export async function getUserProfile(userId: string, options?: RequestInit) {
