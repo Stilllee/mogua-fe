@@ -1,4 +1,4 @@
-type RequestData = Record<string, any> | FormData;
+type RequestData = Record<string, unknown> | FormData;
 
 async function fetcher(
   url: string,
