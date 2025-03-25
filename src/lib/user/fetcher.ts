@@ -1,10 +1,19 @@
+const HTTP_METHOD = {
+  GET: "GET",
+  POST: "POST",
+  PATCH: "PATCH",
+  DELETE: "DELETE",
+};
+
+type HttpMethod = (typeof HTTP_METHOD)[keyof typeof HTTP_METHOD];
+
 type RequestData = Record<string, unknown> | FormData;
 
 const CREDENTIALS: RequestCredentials = "include";
 
 async function fetcher(
   url: string,
-  method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
+  method: HttpMethod = HTTP_METHOD.GET,
   data?: RequestData,
   options: Omit<RequestInit, "method" | "body"> = {},
 ) {
@@ -31,19 +40,19 @@ async function fetcher(
 }
 
 export const get = (url: string, options?: Omit<RequestInit, "method">) =>
-  fetcher(url, "GET", undefined, options);
+  fetcher(url, HTTP_METHOD.GET, undefined, options);
 
 export const post = <T extends RequestData>(
   url: string,
   data?: T,
   options?: Omit<RequestInit, "method" | "body">,
-) => fetcher(url, "POST", data, options);
+) => fetcher(url, HTTP_METHOD.POST, data, options);
 
 export const patch = <T extends RequestData>(
   url: string,
   data?: T,
   options?: Omit<RequestInit, "method" | "body">,
-) => fetcher(url, "PATCH", data, options);
+) => fetcher(url, HTTP_METHOD.PATCH, data, options);
 
 export const del = (url: string, options?: Omit<RequestInit, "method">) =>
-  fetcher(url, "DELETE", undefined, options);
+  fetcher(url, HTTP_METHOD.DELETE, undefined, options);
