@@ -1,29 +1,33 @@
 type RequestData = Record<string, unknown> | FormData;
 
+const CREDENTIALS: RequestCredentials = "include";
+
 async function fetcher(
   url: string,
   method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
   data?: RequestData,
   options: Omit<RequestInit, "method" | "body"> = {},
 ) {
-  const config = {
+  const headers = new Headers(options.headers);
+
+  if (data && !(data instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const config: RequestInit = {
     ...options,
     method,
-    credentials: "include" as RequestCredentials,
-    headers: {
-      ...(data instanceof FormData
-        ? {}
-        : {
-            "Content-Type": "application/json",
-          }),
-      ...options.headers,
-    },
-    ...(data && {
-      body: data instanceof FormData ? data : JSON.stringify(data),
-    }),
+    credentials: CREDENTIALS,
+    headers,
   };
 
-  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, config);
+  if (data) {
+    config.body = data instanceof FormData ? data : JSON.stringify(data);
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+  return fetch(`${baseUrl}${url}`, config);
 }
 
 export const get = (url: string, options?: Omit<RequestInit, "method">) =>
