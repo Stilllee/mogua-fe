@@ -1,13 +1,9 @@
-const HTTP_METHOD = {
-  GET: "GET",
-  POST: "POST",
-  PATCH: "PATCH",
-  DELETE: "DELETE",
-};
-
-type HttpMethod = (typeof HTTP_METHOD)[keyof typeof HTTP_METHOD];
-
-type RequestData = Record<string, unknown> | FormData;
+import {
+  type RequestData,
+  type HttpMethod,
+  HTTP_METHOD,
+  type RequestConfig,
+} from "@/types/api";
 
 const CREDENTIALS: RequestCredentials = "include";
 
@@ -15,8 +11,8 @@ async function fetcher(
   url: string,
   method: HttpMethod = HTTP_METHOD.GET,
   data?: RequestData,
-  options: Omit<RequestInit, "method" | "body"> = {},
-) {
+  options: RequestConfig = {},
+): Promise<Response> {
   const headers = new Headers(options.headers);
 
   if (data && !(data instanceof FormData)) {
@@ -39,20 +35,20 @@ async function fetcher(
   return fetch(`${baseUrl}${url}`, config);
 }
 
-export const get = (url: string, options?: Omit<RequestInit, "method">) =>
+export const get = (url: string, options?: RequestConfig) =>
   fetcher(url, HTTP_METHOD.GET, undefined, options);
 
-export const post = <T extends RequestData>(
+export const post = (
   url: string,
-  data?: T,
-  options?: Omit<RequestInit, "method" | "body">,
+  data?: RequestData,
+  options?: RequestConfig,
 ) => fetcher(url, HTTP_METHOD.POST, data, options);
 
-export const patch = <T extends RequestData>(
+export const patch = (
   url: string,
-  data?: T,
-  options?: Omit<RequestInit, "method" | "body">,
+  data?: RequestData,
+  options?: RequestConfig,
 ) => fetcher(url, HTTP_METHOD.PATCH, data, options);
 
-export const del = (url: string, options?: Omit<RequestInit, "method">) =>
+export const del = (url: string, options?: RequestConfig) =>
   fetcher(url, HTTP_METHOD.DELETE, undefined, options);

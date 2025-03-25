@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { patch } from "@/lib/user/fetcher";
+import { patch } from "@/lib/api/fetcher";
 import { getUserProfile } from "@/lib/user/getUserProfile";
 import useUserStore from "@/store/auth/useUserStore";
 

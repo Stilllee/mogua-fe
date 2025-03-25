@@ -1,4 +1,4 @@
-import { get, post, patch, del } from "@/lib/user/fetcher";
+import { get, post, patch, del } from "@/lib/api/fetcher";
 
 describe("fetcher", () => {
   const mockData = { data: "test" };

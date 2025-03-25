@@ -1,12 +1,11 @@
+import { type ApiResponse, type PageResponse } from "@/types/api";
 import { type CardProps } from "@/types/card";
 import { type ReviewInfo } from "@/types/review";
 import {
-  type ApiResponse,
   type ParticipatingMeetup,
   type CreatedMeetup,
   type EligibleReview,
   type WrittenReview,
-  type PageResponse,
 } from "@/types/user-page";
 
 // API 응답을 CardProps로 변환하는 함수

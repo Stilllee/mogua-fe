@@ -1,4 +1,4 @@
-import { get } from "./fetcher";
+import { get } from "../api/fetcher";
 import { PAGE_SIZE } from "@/constants/pagination";
 
 export const userContentApi = {

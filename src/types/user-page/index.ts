@@ -81,7 +81,7 @@ export interface EmptyStateProps {
 }
 
 // ===== API 응답 타입 =====
-export interface ApiResponse<T> {
+/* export interface ApiResponse<T> {
   status: string;
   data: T[];
   message: string | null;
@@ -95,7 +95,7 @@ export interface PageResponse<T> {
   items: T[];
   hasNextPage: boolean;
   nextPage: number;
-}
+} */
 
 export interface ParticipatingMeetup extends BaseMeetup {
   meetingType: MeetingType;

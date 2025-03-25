@@ -1,4 +1,4 @@
-import { get } from "@/lib/user/fetcher";
+import { get } from "@/lib/api/fetcher";
 import { getUserProfile } from "@/lib/user/getUserProfile";
 
 jest.mock("@/lib/user/fetcher");
