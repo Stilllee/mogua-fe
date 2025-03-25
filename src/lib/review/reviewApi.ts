@@ -1,4 +1,4 @@
-import { del, post, patch, get } from "@/lib/user/fetcher";
+import { del, post, patch, get } from "@/lib/api/fetcher";
 
 export const createReview = async (formData: FormData) => {
   const res = await post("/reviews", formData);

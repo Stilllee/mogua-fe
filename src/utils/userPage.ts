@@ -1,5 +1,6 @@
 import { PAGE_SIZE } from "@/constants/pagination";
-import { get } from "@/lib/user/fetcher";
+import { get } from "@/lib/api/fetcher";
+import { type PageResponse, type ApiResponse } from "@/types/api";
 
 import { type CardProps } from "@/types/card";
 import { type ReviewInfo } from "@/types/review";
@@ -7,10 +8,8 @@ import {
   type FetchConfig,
   type StudyType,
   type UserPageSection,
-  type ApiResponse,
   type ParticipatingMeetup,
   type CreatedMeetup,
-  type PageResponse,
   type EligibleReview,
   type WrittenReview,
 } from "@/types/user-page";
